@@ -1,0 +1,26 @@
+NODE endpoint
+
+SQL >
+  %
+  WITH t AS (
+    SELECT
+      topic AS name,
+      multiIf(
+        sentiment = 'positive', 'positive',
+        sentiment = 'negative', 'negative',
+        'warning'
+      ) AS type,
+      count() AS amount
+    FROM topic_events
+    WHERE true
+      {% if defined(dateFrom) %} AND timestamp >= {{ DateTime64(dateFrom) }} {% end %}
+      {% if defined(dateTo) %} AND timestamp <= {{ DateTime64(dateTo) }} {% end %}
+    GROUP BY name, type
+  )
+  SELECT *
+  FROM t
+  ORDER BY amount DESC
+  LIMIT {{Int32(limit, 20)}}
+
+TYPE ENDPOINT
+

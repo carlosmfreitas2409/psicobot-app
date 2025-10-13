@@ -1,0 +1,11 @@
+TOKEN "tracker" APPEND
+
+SCHEMA >
+  `timestamp` DateTime64(3) `json:$.timestamp`,
+  `chat_id` String `json:$.chat_id`,
+  `topic` LowCardinality(String) `json:$.topic`,
+  `sentiment` LowCardinality(String) `json:$.sentiment`
+
+ENGINE MergeTree
+ENGINE_PARTITION_KEY toYYYYMM(timestamp)
+ENGINE_SORTING_KEY "chat_id, timestamp"

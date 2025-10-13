@@ -1,0 +1,77 @@
+NODE endpoint
+
+SQL >
+  %
+  SELECT
+    (
+      SELECT count()
+      FROM chat_events
+      WHERE 
+        true
+        {% if defined(dateFrom) %}
+          AND timestamp >= {{ DateTime64(dateFrom) }}
+        {% else %}
+          AND timestamp >= now() - INTERVAL 30 DAY
+        {% end %}
+        {% if defined(dateTo) %}
+          AND timestamp <= {{ DateTime64(dateTo) }}
+        {% else %}
+          AND timestamp <= now()
+        {% end %}
+    ) AS chats,
+    (
+      SELECT count()
+      FROM chat_events
+      WHERE
+        true
+        {% if defined(dateFrom) %}
+          AND timestamp >= addMonths({{ DateTime64(dateFrom) }}, -1)
+        {% else %}
+          AND timestamp >= addMonths(now() - INTERVAL 30 DAY, -1)
+        {% end %}
+        {% if defined(dateTo) %}
+          AND timestamp <= addMonths({{ DateTime64(dateTo) }}, -1)
+        {% else %}
+          AND timestamp <= addMonths(now(), -1)
+        {% end %}
+    ) AS chatsLastMonth,
+    (
+      SELECT avgOrNull(duration)
+      FROM chat_events
+      WHERE
+        true
+        {% if defined(dateFrom) %}
+          AND timestamp >= {{ DateTime64(dateFrom) }}
+        {% else %}
+          AND timestamp >= now() - INTERVAL 30 DAY
+        {% end %}
+        {% if defined(dateTo) %}
+          AND timestamp <= {{ DateTime64(dateTo) }}
+        {% else %}
+          AND timestamp <= now()
+        {% end %}
+    ) AS averageDuration,
+    (
+      SELECT avgOrNull(duration)
+      FROM chat_events
+      WHERE
+        true
+        {% if defined(dateFrom) %}
+          AND timestamp >= addMonths({{ DateTime64(dateFrom) }}, -1)
+        {% else %}
+          AND timestamp >= addMonths(now() - INTERVAL 30 DAY, -1)
+        {% end %}
+        {% if defined(dateTo) %}
+          AND timestamp <= addMonths({{ DateTime64(dateTo) }}, -1)
+        {% else %}
+          AND timestamp <= addMonths(now(), -1)
+        {% end %}
+    ) AS averageDurationLastMonth,
+    toFloat64(0) AS engagementRate,
+    toFloat64(0) AS engagementRateLastMonth,
+    toFloat64(0) AS wellbeingScore,
+    toFloat64(0) AS wellbeingScoreLastMonth
+  FROM system.one
+
+TYPE ENDPOINT
+

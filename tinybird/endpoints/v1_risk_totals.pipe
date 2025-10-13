@@ -1,0 +1,17 @@
+NODE endpoint
+
+SQL >
+  %
+  SELECT
+    sumIf(1, risk_level = 'critical') AS critical,
+    sumIf(1, risk_level = 'high') AS high,
+    sumIf(1, risk_level = 'medium') AS medium,
+    sumIf(1, risk_level = 'low') AS low
+  FROM risk_events
+  WHERE
+    true
+    {% if defined(dateFrom) %} AND timestamp >= {{ DateTime64(dateFrom) }} {% end %}
+    {% if defined(dateTo) %} AND timestamp <= {{ DateTime64(dateTo) }} {% end %}
+
+TYPE ENDPOINT
+

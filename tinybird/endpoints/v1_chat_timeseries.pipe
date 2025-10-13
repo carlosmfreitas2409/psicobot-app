@@ -1,0 +1,101 @@
+NODE month_intervals
+SQL >
+  %
+  WITH
+    toStartOfMonth(
+      toDateTime64({{ DateTime64(dateFrom, '2025-05-12 00:00:00.000') }}, 3),
+      {{ String(timezone, 'UTC') }}
+    ) AS dateFrom,
+    toStartOfMonth(
+      toDateTime64({{ DateTime64(dateTo, '2025-05-27 00:00:00.000') }}, 3),
+      {{ String(timezone, 'UTC') }}
+    ) AS dateTo,
+    dateDiff('month', dateFrom, dateTo) + 1 AS months_diff
+  SELECT
+    arrayJoin(
+      arrayMap(
+        x -> toDateTime64(dateFrom + toIntervalMonth(x), 3, {{ String(timezone, 'UTC') }}),
+        range(0, months_diff)
+      )
+    ) AS interval
+
+
+NODE day_intervals
+SQL >
+  %
+  WITH
+    toStartOfDay(
+      toDateTime64({{ DateTime64(dateFrom, '2025-05-12 00:00:00.000') }}, 3),
+      {{ String(timezone, 'UTC') }}
+    ) AS dateFrom,
+    toStartOfDay(
+      toDateTime64({{ DateTime64(dateTo, '2025-05-27 00:00:00.000') }}, 3),
+      {{ String(timezone, 'UTC') }}
+    ) AS dateTo
+  SELECT
+    arrayJoin(
+      arrayMap(
+        x -> toDateTime64(toStartOfDay(toDateTime64(x, 3), {{ String(timezone, 'UTC') }}), 3),
+        range(toUInt32(dateFrom), toUInt32(dateTo + 86400), 86400)
+      )
+    ) AS interval
+
+
+NODE hour_intervals
+SQL >
+  %
+  WITH
+    toStartOfHour(
+      toDateTime64({{ DateTime64(dateFrom, '2024-05-22 00:00:00.000') }}, 3),
+      {{ String(timezone, 'UTC') }}
+    ) AS dateFrom,
+    toStartOfHour(
+      toDateTime64({{ DateTime64(dateTo, '2025-05-27 00:00:00.000') }}, 3),
+      {{ String(timezone, 'UTC') }}
+    ) AS dateTo
+  SELECT
+    arrayJoin(
+      arrayMap(
+        x -> toDateTime64(x, 3),
+        range(toUInt32(dateFrom), toUInt32(dateTo + 3600), 3600)
+      )
+    ) AS interval
+
+NODE timeseries_data
+SQL >
+  %
+  SELECT
+    {% if granularity == "hour" %}
+      toStartOfHour(timestamp, {{ String(timezone, 'UTC') }})
+    {% elif granularity == "month" %}
+      toDateTime64(
+        toStartOfMonth(timestamp, {{ String(timezone, 'UTC') }}),
+        3,
+        {{ String(timezone, 'UTC') }}
+      )
+    {% else %}
+      toDateTime64(toStartOfDay(timestamp, {{ String(timezone, 'UTC') }}), 3)
+    {% end %} AS interval,
+    count() AS chats
+  FROM chat_events
+  WHERE 1 = 1
+    AND timestamp >= {{ DateTime(dateFrom, '2025-05-12 00:00:00') }}
+    AND timestamp < {{ DateTime(dateTo, '2025-05-27 00:00:00') }}
+  GROUP BY interval
+  ORDER BY interval
+
+NODE endpoint
+SQL >
+  %
+  SELECT
+    formatDateTime(interval, '%FT%T.000%z') AS start,
+    chats
+  FROM
+    {% if granularity == "minute" %} minute_intervals
+    {% elif granularity == "hour" %} hour_intervals
+    {% elif granularity == "month" %} month_intervals
+    {% else %} day_intervals
+    {% end %}
+  LEFT JOIN timeseries_data USING interval
+
+TYPE ENDPOINT

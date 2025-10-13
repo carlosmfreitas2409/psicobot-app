@@ -1,0 +1,26 @@
+NODE endpoint
+
+SQL >
+  %
+  WITH totals AS (
+    SELECT
+      sumIf(1, level = 'healthy') AS healthy,
+      sumIf(1, level = 'attention') AS attention,
+      sumIf(1, level = 'alert') AS alert,
+      sumIf(1, level = 'critical') AS critical,
+      sumIf(1, level IN ('healthy','attention','alert','critical')) AS total
+    FROM wellbeing_events
+    WHERE 
+      true
+      {% if defined(dateFrom) %} AND timestamp >= {{ DateTime64(dateFrom) }} {% end %}
+      {% if defined(dateTo) %} AND timestamp <= {{ DateTime64(dateTo) }} {% end %}
+  )
+  SELECT
+    multiIf(total = 0, 0.0, round(100.0 * healthy / total, 2)) AS healthy,
+    multiIf(total = 0, 0.0, round(100.0 * attention / total, 2)) AS attention,
+    multiIf(total = 0, 0.0, round(100.0 * alert / total, 2)) AS alert,
+    multiIf(total = 0, 0.0, round(100.0 * critical / total, 2)) AS critical
+  FROM totals
+
+TYPE ENDPOINT
+
