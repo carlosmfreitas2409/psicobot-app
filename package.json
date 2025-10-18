@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
+    "@neondatabase/serverless": "^1.0.2",
     "@openrouter/ai-sdk-provider": "^1.2.0",
     "@orpc/client": "^1.9.3",
     "@orpc/json-schema": "^1.9.3",
