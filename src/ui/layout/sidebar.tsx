@@ -1,13 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import type { User } from "better-auth";
 
 import {
   AlertTriangle,
   Bot,
   Cable,
   HomeIcon,
-  IdCardLanyard,
   Search,
   Users,
 } from "lucide-react";
@@ -71,7 +71,11 @@ const routes = {
   ],
 };
 
-export function Sidebar() {
+interface SidebarProps {
+  user: User;
+}
+
+export function Sidebar({ user }: SidebarProps) {
   const { open } = useSidebar();
 
   const [isCommandOpen, setIsCommandOpen] = useState(false);
@@ -179,7 +183,7 @@ export function Sidebar() {
           </Tooltip>
         )}
 
-        <NavUser />
+        <NavUser user={user} />
       </SidebarFooter>
     </SidebarComponent>
   );

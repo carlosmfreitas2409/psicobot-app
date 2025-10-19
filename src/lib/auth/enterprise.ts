@@ -1,17 +1,13 @@
-import type {
-  User,
-  BetterAuthPlugin,
-  BetterAuthClientPlugin,
-  AuthContext,
-} from "better-auth";
+import type { User, AuthContext, BetterAuthPlugin } from "better-auth";
 import {
   APIError,
-  createAuthEndpoint,
   sessionMiddleware,
+  createAuthEndpoint,
 } from "better-auth/api";
+
 import { generateRandomString } from "better-auth/crypto";
 
-import { z } from "zod/v3";
+import { z } from "zod";
 
 export const enterprise = () => {
   return {
@@ -127,7 +123,7 @@ export const enterprise = () => {
         async (ctx) => {
           const { organization, admin } = ctx.body;
 
-          const token = generateRandomString(32, "hex");
+          const token = generateRandomString(32);
 
           await ctx.context.internalAdapter.createVerificationValue(
             {
@@ -440,11 +436,4 @@ export const enterprise = () => {
       ),
     },
   } satisfies BetterAuthPlugin;
-};
-
-export const enterpriseClient = () => {
-  return {
-    id: "enterprise",
-    $InferServerPlugin: {} as ReturnType<typeof enterprise>,
-  } satisfies BetterAuthClientPlugin;
 };
