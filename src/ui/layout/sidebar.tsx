@@ -64,11 +64,6 @@ const routes = {
       icon: AlertTriangle,
     },
     {
-      title: "Colaboradores",
-      url: "/collaborators",
-      icon: IdCardLanyard,
-    },
-    {
       title: "Integrações",
       url: "/integrations",
       icon: Cable,

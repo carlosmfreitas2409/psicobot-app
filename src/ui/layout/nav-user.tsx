@@ -1,3 +1,5 @@
+"use client";
+
 import { BadgeCheck, Bell, ChevronsUpDown, LogOut } from "lucide-react";
 
 import { signOut, useSession } from "@/lib/auth/client";

@@ -34,6 +34,7 @@ const ROLES = {
 };
 
 export function AddMemberDialog() {
+  const [email, setEmail] = useState("");
   const [role, setRole] = useState<keyof typeof ROLES>("member");
 
   return (
@@ -56,6 +57,8 @@ export function AddMemberDialog() {
               type="email"
               placeholder="nome@empresa.com"
               className="pl-9"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
           </div>
         </div>
@@ -98,7 +101,7 @@ export function AddMemberDialog() {
               Cancelar
             </Button>
           </DialogClose>
-          <Button className="flex-1">
+          <Button className="flex-1" disabled={!email}>
             <Send className="mr-2 h-4 w-4" />
             Enviar Convite
           </Button>

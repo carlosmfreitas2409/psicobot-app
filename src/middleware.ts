@@ -1,14 +1,18 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { getSessionCookie } from "better-auth/cookies";
+import { headers } from "next/headers";
+
+import { auth } from "./lib/auth";
 
 export async function middleware(request: NextRequest) {
   const nextUrl = request.nextUrl;
 
-  const sessionCookie = getSessionCookie(request);
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
 
   // 1. Not authenticated
   if (
-    !sessionCookie &&
+    !session &&
     nextUrl.pathname !== "/sign-in" &&
     nextUrl.pathname !== "/sign-up" &&
     nextUrl.pathname !== "/pricing"
@@ -19,7 +23,7 @@ export async function middleware(request: NextRequest) {
   }
 
   if (
-    sessionCookie &&
+    session &&
     (nextUrl.pathname === "/sign-in" ||
       nextUrl.pathname === "/sign-up" ||
       nextUrl.pathname === "/pricing")

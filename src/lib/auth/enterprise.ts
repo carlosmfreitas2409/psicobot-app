@@ -1,12 +1,17 @@
+import type {
+  User,
+  BetterAuthPlugin,
+  BetterAuthClientPlugin,
+  AuthContext,
+} from "better-auth";
 import {
   APIError,
-  type User,
-  type BetterAuthPlugin,
-  type BetterAuthClientPlugin,
-} from "better-auth";
-import { createAuthEndpoint, sessionMiddleware } from "better-auth/api";
+  createAuthEndpoint,
+  sessionMiddleware,
+} from "better-auth/api";
 import { generateRandomString } from "better-auth/crypto";
-import { z } from "zod";
+
+import { z } from "zod/v3";
 
 export const enterprise = () => {
   return {
@@ -31,14 +36,12 @@ export const enterprise = () => {
           name: {
             type: "string",
             required: true,
-            sortable: true,
             fieldName: "name",
           },
           slug: {
             type: "string",
             required: true,
             unique: true,
-            sortable: true,
             fieldName: "slug",
           },
           logo: {
@@ -68,19 +71,16 @@ export const enterprise = () => {
           email: {
             type: "string",
             required: true,
-            sortable: true,
             fieldName: "email",
           },
           role: {
             type: "string",
             required: false,
-            sortable: true,
             fieldName: "role",
           },
           status: {
             type: "string",
             required: true,
-            sortable: true,
             defaultValue: "pending",
             fieldName: "status",
           },
@@ -120,14 +120,14 @@ export const enterprise = () => {
             }),
             admin: z.object({
               name: z.string().min(1),
-              email: z.email(),
+              email: z.string().email(),
             }),
           }),
         },
         async (ctx) => {
           const { organization, admin } = ctx.body;
 
-          const token = generateRandomString(32);
+          const token = generateRandomString(32, "hex");
 
           await ctx.context.internalAdapter.createVerificationValue(
             {
@@ -197,7 +197,7 @@ export const enterprise = () => {
             };
           };
 
-          const isValidEmail = z.email().safeParse(admin.email);
+          const isValidEmail = z.string().email().safeParse(admin.email);
 
           if (!isValidEmail.success) {
             throw new APIError("BAD_REQUEST", {
@@ -332,7 +332,7 @@ export const enterprise = () => {
         {
           method: "POST",
           body: z.object({
-            email: z.email(),
+            email: z.string().email(),
             role: z.string().optional(),
           }),
           use: [sessionMiddleware],
@@ -344,7 +344,9 @@ export const enterprise = () => {
 
           const organizationId = user.organizationId;
 
-          const userExists = await ctx.context.adapter.findOne<
+          const adapter = (ctx.context as AuthContext).adapter;
+
+          const userExists = await adapter.findOne<
             User & { organizationId: string }
           >({
             model: "user",

@@ -14,13 +14,38 @@ SQL >
       true
       {% if defined(dateFrom) %} AND timestamp >= {{ DateTime64(dateFrom) }} {% end %}
       {% if defined(dateTo) %} AND timestamp <= {{ DateTime64(dateTo) }} {% end %}
+  ),
+  totalsLastMonth AS (
+    SELECT
+      sumIf(1, level = 'healthy') AS healthyLastMonth,
+      sumIf(1, level = 'attention') AS attentionLastMonth,
+      sumIf(1, level = 'alert') AS alertLastMonth,
+      sumIf(1, level = 'critical') AS criticalLastMonth,
+      sumIf(1, level IN ('healthy','attention','alert','critical')) AS totalLastMonth
+    FROM wellbeing_events
+    WHERE 
+      true
+      {% if defined(dateFrom) %}
+        AND timestamp >= addMonths({{ DateTime64(dateFrom) }}, -1)
+      {% else %}
+        AND timestamp >= addMonths(now() - INTERVAL 30 DAY, -1)
+      {% end %}
+      {% if defined(dateTo) %}
+        AND timestamp <= addMonths({{ DateTime64(dateTo) }}, -1)
+      {% else %}
+        AND timestamp <= addMonths(now(), -1)
+      {% end %}
   )
   SELECT
     multiIf(total = 0, 0.0, round(100.0 * healthy / total, 2)) AS healthy,
     multiIf(total = 0, 0.0, round(100.0 * attention / total, 2)) AS attention,
     multiIf(total = 0, 0.0, round(100.0 * alert / total, 2)) AS alert,
-    multiIf(total = 0, 0.0, round(100.0 * critical / total, 2)) AS critical
-  FROM totals
+    multiIf(total = 0, 0.0, round(100.0 * critical / total, 2)) AS critical,
+    multiIf(totalLastMonth = 0, 0.0, round(100.0 * healthyLastMonth / totalLastMonth, 2)) AS healthyLastMonth,
+    multiIf(totalLastMonth = 0, 0.0, round(100.0 * attentionLastMonth / totalLastMonth, 2)) AS attentionLastMonth,
+    multiIf(totalLastMonth = 0, 0.0, round(100.0 * alertLastMonth / totalLastMonth, 2)) AS alertLastMonth,
+    multiIf(totalLastMonth = 0, 0.0, round(100.0 * criticalLastMonth / totalLastMonth, 2)) AS criticalLastMonth
+  FROM totals, totalsLastMonth
 
 TYPE ENDPOINT
 

@@ -6,8 +6,6 @@ import type { AnalyticsFilters } from "./get-analytics-filters";
 
 import { INTERVAL_PRESETS } from "./mock";
 import { useMemo } from "react";
-import { Button } from "@/components/ui/button";
-import { DownloadIcon } from "lucide-react";
 
 interface HeaderProps {
   filters: AnalyticsFilters;
@@ -46,11 +44,6 @@ export function Header({ filters }: HeaderProps) {
                 };
               })}
             />
-
-            <Button variant="outline">
-              <DownloadIcon className="h-4 w-4" />
-              <span>Exportar</span>
-            </Button>
           </div>
         </div>
       </div>

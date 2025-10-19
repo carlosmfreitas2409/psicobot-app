@@ -42,7 +42,7 @@ export const createChatReport = pub
   })
   .input(
     z.object({
-      duration: z.number().int().min(0),
+      duration: z.number(),
       messages: z.array(
         z.object({
           role: z.enum(["user", "assistant"]),

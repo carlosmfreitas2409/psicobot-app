@@ -154,7 +154,7 @@ export function WellbeingTimeseries({ data }: WellbeingTimeseriesProps) {
           fill="url(#fillAttention)"
           fillOpacity={0.4}
           stroke="var(--color-attention)"
-          stackId="a"
+          stackId="b"
         />
         <Area
           dataKey="alert"
@@ -162,7 +162,7 @@ export function WellbeingTimeseries({ data }: WellbeingTimeseriesProps) {
           fill="url(#fillAlert)"
           fillOpacity={0.4}
           stroke="var(--color-alert)"
-          stackId="a"
+          stackId="c"
         />
         <Area
           dataKey="critical"
@@ -170,7 +170,7 @@ export function WellbeingTimeseries({ data }: WellbeingTimeseriesProps) {
           fill="url(#fillCritical)"
           fillOpacity={0.4}
           stroke="var(--color-critical)"
-          stackId="a"
+          stackId="d"
         />
       </AreaChart>
     </ChartContainer>
