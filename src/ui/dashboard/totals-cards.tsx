@@ -46,7 +46,7 @@ export async function TotalsCards() {
       />
 
       <StatsCard
-        title="Duração média (conversas)"
+        title="Duração média"
         value={`${durationInMinutes} min`}
         change={`${durationChange > 0 ? "+" : ""}${durationChange} min`}
         trend={durationChange >= 0 ? "up" : "down"}
