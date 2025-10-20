@@ -7,7 +7,7 @@ export const env = createEnv({
     OPENROUTER_API_KEY: z.string().min(1),
     TINYBIRD_TOKEN: z.string().min(1),
     TINYBIRD_URL: z.url().default("https://api.us-east.aws.tinybird.co"),
-    REDIS_URL: z.url().default("redis://localhost:6379"),
+    REDIS_URL: z.string().default("redis://localhost:6379"),
     RESEND_API_KEY: z.string().min(1),
   },
   client: {

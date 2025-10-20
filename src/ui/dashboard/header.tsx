@@ -1,11 +1,14 @@
 "use client";
 
+import { useMemo } from "react";
+
 import { DateRangePicker } from "@/components/ui/date-picker/range";
 
 import type { AnalyticsFilters } from "./get-analytics-filters";
 
+import { SendReportButton } from "./send-report-button";
+
 import { INTERVAL_PRESETS } from "./mock";
-import { useMemo } from "react";
 
 interface HeaderProps {
   filters: AnalyticsFilters;
@@ -26,6 +29,7 @@ export function Header({ filters }: HeaderProps) {
           <h1 className="text-base font-medium">Visão Geral</h1>
 
           <div className="flex items-center gap-2">
+            <SendReportButton />
             <DateRangePicker
               value={dateRange}
               align="end"

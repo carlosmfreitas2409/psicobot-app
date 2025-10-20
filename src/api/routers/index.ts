@@ -1,6 +1,7 @@
 import { createChatReport } from "./report";
 import { getAnalyticsRoute } from "./analytics";
 import { generateRecommendations } from "./recommendations";
+import { sendAnalyticsReport } from "./send-report";
 
 import { createQuestion, getTotals, listQuestions } from "./questions";
 
@@ -18,6 +19,9 @@ export const router = {
   },
   recommendations: {
     generate: generateRecommendations,
+  },
+  reports: {
+    send: sendAnalyticsReport,
   },
   chats: {
     createReport: createChatReport,

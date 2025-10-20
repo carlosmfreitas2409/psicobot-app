@@ -16,8 +16,6 @@ import {
   Hr,
 } from "@react-email/components";
 
-import { RiskoMark } from "../assets/risko-mark";
-
 interface InviteUserEmailProps {
   invitationUrl: string;
   organizationName: string;
@@ -44,8 +42,13 @@ export function InviteUserEmail({
         <Body className="bg-white my-auto mx-auto font-sans px-2">
           <Container className="border border-solid border-[#eaeaea] rounded my-[40px] mx-auto px-[40px] py-[40px] max-w-[600px]">
             <div className="max-w-[465px] mx-auto">
-              <div className="flex items-center justify-center">
-                <RiskoMark className="size-[48px]" />
+              <div className="text-center">
+                <Img
+                  src="https://cdn.dev.inzone.com/risko.png"
+                  alt="Risko"
+                  width={52}
+                  className="inline-block"
+                />
               </div>
 
               <Heading className="text-black text-[24px] font-normal text-center p-0 my-[28px] mx-0">
