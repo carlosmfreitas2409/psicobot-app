@@ -8,6 +8,7 @@ export const env = createEnv({
     TINYBIRD_TOKEN: z.string().min(1),
     TINYBIRD_URL: z.url().default("https://api.us-east.aws.tinybird.co"),
     REDIS_URL: z.url().default("redis://localhost:6379"),
+    RESEND_API_KEY: z.string().min(1),
   },
   client: {
     NEXT_PUBLIC_APP_URL: z.url().optional(),
@@ -18,6 +19,7 @@ export const env = createEnv({
     TINYBIRD_TOKEN: process.env.TINYBIRD_TOKEN,
     TINYBIRD_URL: process.env.TINYBIRD_URL,
     REDIS_URL: process.env.REDIS_URL,
+    RESEND_API_KEY: process.env.RESEND_API_KEY,
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
   },
 });

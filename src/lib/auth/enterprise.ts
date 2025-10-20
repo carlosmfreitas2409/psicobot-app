@@ -4,10 +4,19 @@ import {
   sessionMiddleware,
   createAuthEndpoint,
 } from "better-auth/api";
+import type { InferSelectModel } from "drizzle-orm";
+import { z } from "zod";
 
 import { generateRandomString } from "better-auth/crypto";
 
-import { z } from "zod";
+import type { organization } from "@/api/db/schema/auth";
+
+import InviteUserEmail from "@/components/emails/invite-user";
+import CreateOrganizationEmail from "@/components/emails/create-organization";
+
+import { resend } from "../resend";
+
+type Organization = InferSelectModel<typeof organization>;
 
 export const enterprise = () => {
   return {
@@ -116,7 +125,7 @@ export const enterprise = () => {
             }),
             admin: z.object({
               name: z.string().min(1),
-              email: z.string().email(),
+              email: z.email(),
             }),
           }),
         },
@@ -129,7 +138,7 @@ export const enterprise = () => {
             {
               identifier: token,
               value: JSON.stringify({ admin, organization }),
-              expiresAt: new Date(Date.now() + 60 * 5 * 1000),
+              expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24),
             },
             ctx,
           );
@@ -138,9 +147,16 @@ export const enterprise = () => {
 
           url.searchParams.set("token", token);
 
-          console.log(url.toString());
-          console.log(token);
-          // send email with url
+          await resend.emails.send({
+            from: "Risko <onboarding@resend.dev>",
+            to: admin.email,
+            subject: `Complete o cadastro de ${organization.name} no Risko`,
+            react: CreateOrganizationEmail({
+              adminName: admin.name,
+              organizationName: organization.name,
+              signUpLink: url.toString(),
+            }),
+          });
 
           return ctx.json({
             status: true,
@@ -328,7 +344,7 @@ export const enterprise = () => {
         {
           method: "POST",
           body: z.object({
-            email: z.string().email(),
+            email: z.email(),
             role: z.string().optional(),
           }),
           use: [sessionMiddleware],
@@ -341,6 +357,22 @@ export const enterprise = () => {
           const organizationId = user.organizationId;
 
           const adapter = (ctx.context as AuthContext).adapter;
+
+          const organization = await adapter.findOne<Organization>({
+            model: "organization",
+            where: [
+              {
+                field: "id",
+                value: organizationId,
+              },
+            ],
+          });
+
+          if (!organization) {
+            throw new APIError("UNPROCESSABLE_ENTITY", {
+              message: "Organization not found",
+            });
+          }
 
           const userExists = await adapter.findOne<
             User & { organizationId: string }
@@ -398,7 +430,20 @@ export const enterprise = () => {
             },
           });
 
-          // send email with invitation
+          const invitationUrl = new URL(`/accept-invite`, ctx.context.baseURL);
+          invitationUrl.searchParams.set("id", invitation.id);
+
+          await resend.emails.send({
+            from: "Risko <onboarding@resend.dev>",
+            to: email,
+            subject: `Você foi convidado para entrar em ${organization.name} no Risko`,
+            react: InviteUserEmail({
+              invitationUrl: invitationUrl.toString(),
+              organizationName: organization.name,
+              authorName: user.name,
+              userEmail: email,
+            }),
+          });
 
           return ctx.json({
             invitation,
