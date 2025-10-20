@@ -4,13 +4,15 @@ import { useEffect, useState } from "react";
 import type { User } from "better-auth";
 
 import {
-  AlertTriangle,
   Bot,
   Cable,
   HomeIcon,
+  MessageCircle,
   Search,
   Users,
 } from "lucide-react";
+
+import { cn } from "@/lib/utils";
 
 import { orpc } from "@/lib/orpc";
 
@@ -40,7 +42,6 @@ import { CommandDialog, CommandInput } from "@/components/ui/command";
 
 import { NavUser } from "./nav-user";
 import { NavItem } from "./nav-item";
-import { cn } from "@/lib/utils";
 
 const POLLING_INTERVAL = 1000 * 60 * 5; // 5 minutes
 
@@ -64,14 +65,14 @@ const routes = {
   ],
   roadmap: [
     {
-      title: "Alertas de Risco",
-      url: "/alerts",
-      icon: AlertTriangle,
-    },
-    {
       title: "Integrações",
       url: "/integrations",
       icon: Cable,
+    },
+    {
+      title: "Conversar",
+      url: "/chat",
+      icon: MessageCircle,
     },
   ],
 };

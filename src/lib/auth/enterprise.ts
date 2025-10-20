@@ -9,7 +9,7 @@ import { z } from "zod";
 
 import { generateRandomString } from "better-auth/crypto";
 
-import type { organization } from "@/api/db/schema/auth";
+import type { invitation, organization } from "@/api/db/schema/auth";
 
 import InviteUserEmail from "@/components/emails/invite-user";
 import CreateOrganizationEmail from "@/components/emails/create-organization";
@@ -17,6 +17,7 @@ import CreateOrganizationEmail from "@/components/emails/create-organization";
 import { resend } from "../resend";
 
 type Organization = InferSelectModel<typeof organization>;
+type Invitation = InferSelectModel<typeof invitation>;
 
 export const enterprise = () => {
   return {
@@ -434,7 +435,7 @@ export const enterprise = () => {
           invitationUrl.searchParams.set("id", invitation.id);
 
           await resend.emails.send({
-            from: "Risko <onboarding@resend.dev>",
+            from: "Risko <risko@carlosmeduardo.dev>",
             to: email,
             subject: `Você foi convidado para entrar em ${organization.name} no Risko`,
             react: InviteUserEmail({
@@ -459,23 +460,51 @@ export const enterprise = () => {
         async (ctx) => {
           const { user } = ctx.context.session;
 
-          const users = await ctx.context.internalAdapter.listUsers(
-            undefined,
-            undefined,
-            undefined,
-            [{ field: "organizationId", value: user.organizationId }],
-          );
+          const [users, invitations] = await Promise.all([
+            ctx.context.internalAdapter.listUsers(
+              undefined,
+              undefined,
+              undefined,
+              [{ field: "organizationId", value: user.organizationId }],
+            ),
+            ctx.context.adapter.findMany<Invitation>({
+              model: "invitation",
+              where: [
+                { field: "organizationId", value: user.organizationId },
+                { field: "status", value: "pending" },
+              ],
+            }),
+          ]);
 
           const members = users.map((user) => ({
             id: user.id,
+            status: "member",
             email: user.email,
             name: user.name,
-            image: user.image,
+            image: user.image ?? null,
             createdAt: user.createdAt,
           }));
 
+          const pendingInvitations = invitations.map((invitation) => ({
+            id: invitation.id,
+            status: "pending",
+            email: invitation.email,
+            name: null,
+            image: null,
+            createdAt: invitation.createdAt,
+          }));
+
+          const allMembers = [...members, ...pendingInvitations].sort(
+            (a, b) => {
+              return (
+                new Date(a.createdAt).getTime() -
+                new Date(b.createdAt).getTime()
+              );
+            },
+          );
+
           return ctx.json({
-            members,
+            members: allMembers,
           });
         },
       ),

@@ -45,6 +45,8 @@ export function AddQuestionDialog() {
     setIsLoading(false);
 
     setOpen(false);
+    setQuestion("");
+    setFrequency("rare");
 
     router.refresh();
   }

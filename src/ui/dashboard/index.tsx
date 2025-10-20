@@ -10,6 +10,7 @@ import { TopicsCloud } from "./topics-cloud";
 import { ChatsCard } from "./chats-card";
 import { TotalsCards } from "./totals-cards";
 import { Recommendations } from "./recommendations";
+import { WellbeingDistribution } from "./wellbeing-distribution";
 
 type DashboardProps = {
   searchParams: Record<string, string | undefined>;
@@ -40,8 +41,12 @@ export async function Dashboard({ searchParams }: DashboardProps) {
             </div>
           </div>
 
-          <div className="grid gap-4 lg:grid-cols-2">
-            <Recommendations />
+          <div className="grid gap-4 lg:grid-cols-4">
+            <div className="lg:col-span-2">
+              <Recommendations />
+            </div>
+
+            <WellbeingDistribution />
           </div>
         </div>
       </Page>
