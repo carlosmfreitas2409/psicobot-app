@@ -8,6 +8,8 @@ import {
   type LucideIcon,
 } from "lucide-react";
 
+import { Grid } from "@/components/assets/grid";
+
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -20,73 +22,90 @@ import {
 
 export default function PricingPage() {
   return (
-    <div className="container mx-auto max-w-6xl py-10">
-      <div className="mb-10 w-full flex justify-between gap-4">
-        <div className="space-y-2 max-w-2xl">
-          <p className="text-xs font-bold text-primary tracking-wide">PLANOS</p>
-          <h1 className="text-3xl font-bold leading-tight">
-            Escolha o plano ideal para sua equipe
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            Preços simples e transparentes que crescem com você. Teste qualquer
-            plano gratuitamente por 15 dias.
-          </p>
+    <>
+      <div className="absolute inset-0 isolate overflow-hidden bg-white -z-10">
+        <div className="absolute inset-y-0 left-1/2 w-[1200px] -translate-x-1/2 [mask-composite:intersect] [mask-image:linear-gradient(black,transparent_320px),linear-gradient(90deg,transparent,black_5%,black_95%,transparent)]">
+          <Grid className="pointer-events-none absolute inset-0 text-neutral-200" />
         </div>
-
-        <Button className="mt-4" variant="outline" asChild>
-          <Link href="/sign-in">
-            Já possui uma conta?
-            <ChevronRight className="size-4" />
-          </Link>
-        </Button>
-      </div>
-
-      <div className="grid items-start gap-8 lg:grid-cols-3">
-        <div className="space-y-8">
-          <Feature
-            title="Alertas de risco em tempo real"
-            description="Identifique colaboradores com maior risco e aja rapidamente com base em sinais do Risko."
-            icon={AlertCircle}
-          />
-          <Feature
-            title="Relatórios e métricas de bem-estar"
-            description="Acompanhe indicadores de bem-estar, chats e tópicos mais mencionados para orientar ações."
-            icon={TrendingUp}
-          />
-          <Feature
-            title="Recomendações acionáveis"
-            description="Receba recomendações do sistema para melhorar o clima e reduzir riscos."
-            icon={Users}
-          />
+        <div className="absolute left-1/2 top-6 size-[80px] -translate-x-1/2 -translate-y-1/2 scale-x-[1.6] mix-blend-overlay">
+          <div className="absolute -inset-16 mix-blend-overlay blur-[50px] saturate-[2] bg-[conic-gradient(from_90deg,#F00_5deg,#EAB308_63deg,#5CFF80_115deg,#1E00FF_170deg,#855AFC_220deg,#3A8BFD_286deg,#F00_360deg)]"></div>
+          <div className="absolute -inset-16 mix-blend-overlay blur-[50px] saturate-[2] bg-[conic-gradient(from_90deg,#F00_5deg,#EAB308_63deg,#5CFF80_115deg,#1E00FF_170deg,#855AFC_220deg,#3A8BFD_286deg,#F00_360deg)]"></div>
         </div>
-
-        <div className="col-span-2 grid grid-cols-2 gap-8">
-          <PricingCard
-            label="Popular"
-            name="Essencial"
-            price={49}
-            description="Recursos essenciais para equipes de até 50 colaboradores."
-            features={[
-              "Dashboard com métricas principais",
-              "Alertas de risco básicos",
-              "Relatórios de bem-estar semanais",
-              "Até 50 colaboradores monitorados",
-            ]}
-          />
-
-          <PricingCard
-            name="Enterprise"
-            description="Para times em crescimento que precisam de análises avançadas."
-            features={[
-              "Alertas de risco avançados",
-              "Análises detalhadas de tópicos",
-              "Recomendações personalizadas",
-              "Até 200 colaboradores monitorados",
-            ]}
-          />
+        <div className="absolute left-1/2 top-6 size-[80px] -translate-x-1/2 -translate-y-1/2 scale-x-[1.6] opacity-10">
+          <div className="absolute -inset-16 mix-blend-overlay blur-[50px] saturate-[2] bg-[conic-gradient(from_90deg,#F00_5deg,#EAB308_63deg,#5CFF80_115deg,#1E00FF_170deg,#855AFC_220deg,#3A8BFD_286deg,#F00_360deg)]"></div>
         </div>
       </div>
-    </div>
+
+      <div className="container mx-auto max-w-6xl py-10">
+        <div className="mb-10 w-full flex justify-between gap-4">
+          <div className="space-y-2 max-w-2xl">
+            <p className="text-xs font-bold text-primary tracking-wide">
+              PLANOS
+            </p>
+            <h1 className="text-3xl font-bold leading-tight">
+              Escolha o plano ideal para sua equipe
+            </h1>
+            <p className="text-sm text-muted-foreground">
+              Preços simples e transparentes que crescem com você. Teste
+              qualquer plano gratuitamente por 15 dias.
+            </p>
+          </div>
+
+          <Button className="mt-4" variant="outline" asChild>
+            <Link href="/sign-in">
+              Já possui uma conta?
+              <ChevronRight className="size-4" />
+            </Link>
+          </Button>
+        </div>
+
+        <div className="grid items-start gap-8 lg:grid-cols-3">
+          <div className="space-y-8">
+            <Feature
+              title="Alertas de risco em tempo real"
+              description="Identifique colaboradores com maior risco e aja rapidamente com base em sinais do Risko."
+              icon={AlertCircle}
+            />
+            <Feature
+              title="Relatórios e métricas de bem-estar"
+              description="Acompanhe indicadores de bem-estar, chats e tópicos mais mencionados para orientar ações."
+              icon={TrendingUp}
+            />
+            <Feature
+              title="Recomendações acionáveis"
+              description="Receba recomendações do sistema para melhorar o clima e reduzir riscos."
+              icon={Users}
+            />
+          </div>
+
+          <div className="col-span-2 grid grid-cols-2 gap-8">
+            <PricingCard
+              label="Popular"
+              name="Essencial"
+              price={49}
+              description="Recursos essenciais para equipes de até 50 colaboradores."
+              features={[
+                "Dashboard com métricas principais",
+                "Alertas de risco básicos",
+                "Relatórios de bem-estar semanais",
+                "Até 50 colaboradores monitorados",
+              ]}
+            />
+
+            <PricingCard
+              name="Enterprise"
+              description="Para times em crescimento que precisam de análises avançadas."
+              features={[
+                "Alertas de risco avançados",
+                "Análises detalhadas de tópicos",
+                "Recomendações personalizadas",
+                "Até 200 colaboradores monitorados",
+              ]}
+            />
+          </div>
+        </div>
+      </div>
+    </>
   );
 }
 

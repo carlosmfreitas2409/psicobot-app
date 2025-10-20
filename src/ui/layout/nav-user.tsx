@@ -1,5 +1,7 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+
 import type { User } from "better-auth";
 
 import { BadgeCheck, Bell, ChevronsUpDown, LogOut } from "lucide-react";
@@ -28,7 +30,14 @@ interface NavUserProps {
 }
 
 export function NavUser({ user }: NavUserProps) {
+  const router = useRouter();
+
   const { isMobile } = useSidebar();
+
+  async function handleSignOut() {
+    await signOut();
+    router.push("/sign-in");
+  }
 
   return (
     <SidebarMenu>
@@ -80,7 +89,7 @@ export function NavUser({ user }: NavUserProps) {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => signOut()}>
+            <DropdownMenuItem onClick={handleSignOut}>
               <LogOut />
               Sair
             </DropdownMenuItem>

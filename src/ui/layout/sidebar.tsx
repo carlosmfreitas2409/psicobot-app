@@ -14,7 +14,7 @@ import {
 
 import { orpc } from "@/lib/orpc";
 
-import { RiskoMark } from "@/components/logos/risko-mark";
+import { RiskoMark } from "@/components/assets/risko-mark";
 
 import {
   Sidebar as SidebarComponent,
