@@ -4,6 +4,8 @@ import { generateRecommendations } from "./recommendations";
 
 import { createQuestion, getTotals, listQuestions } from "./questions";
 
+import { robotHeartbeat, robotStatus } from "./robot";
+
 export const router = {
   analytics: {
     totals: getAnalyticsRoute("totals"),
@@ -24,5 +26,9 @@ export const router = {
     totals: getTotals,
     list: listQuestions,
     create: createQuestion,
+  },
+  robot: {
+    heartbeat: robotHeartbeat,
+    status: robotStatus,
   },
 };

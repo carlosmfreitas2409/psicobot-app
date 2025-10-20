@@ -3,10 +3,11 @@ import { z } from "zod";
 
 export const env = createEnv({
   server: {
-    DATABASE_URL: z.string().url(),
+    DATABASE_URL: z.url(),
     OPENROUTER_API_KEY: z.string().min(1),
     TINYBIRD_TOKEN: z.string().min(1),
     TINYBIRD_URL: z.url().default("https://api.us-east.aws.tinybird.co"),
+    REDIS_URL: z.url().default("redis://localhost:6379"),
   },
   client: {},
   runtimeEnv: {
@@ -14,5 +15,6 @@ export const env = createEnv({
     OPENROUTER_API_KEY: process.env.OPENROUTER_API_KEY,
     TINYBIRD_TOKEN: process.env.TINYBIRD_TOKEN,
     TINYBIRD_URL: process.env.TINYBIRD_URL,
+    REDIS_URL: process.env.REDIS_URL,
   },
 });

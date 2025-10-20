@@ -18,7 +18,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "PsicoBot",
+  title: "Risko",
   description: "Robô de saúde mental para empresas",
 };
 

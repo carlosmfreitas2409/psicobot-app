@@ -1,27 +1,17 @@
-import { CheckCircle2, Clock, XCircle, Activity } from "lucide-react";
+import { CheckCircle2, Clock, XCircle } from "lucide-react";
 
 import { orpc } from "@/lib/orpc";
 
 import { Card } from "@/components/ui/card";
+
+import { RobotStatusCard } from "./robot-status-card";
 
 export async function TotalsCards() {
   const totals = await orpc.questions.totals({});
 
   return (
     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-      <Card className="p-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-sm text-muted-foreground">Status</p>
-            <p className="mt-2 text-3xl font-semibold text-foreground">
-              Online
-            </p>
-          </div>
-          <div className="flex size-12 items-center justify-center rounded-lg bg-green-100 text-green-500">
-            <Activity className="size-6" />
-          </div>
-        </div>
-      </Card>
+      <RobotStatusCard />
 
       <Card className="p-6">
         <div className="flex items-center justify-between">

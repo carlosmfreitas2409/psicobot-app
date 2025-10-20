@@ -7,6 +7,10 @@ import { env } from "@/env";
 import { getAnalytics } from "@/lib/analytics/get-analytics";
 
 import { pub } from "../orpc";
+import { getRedisClient } from "../redis";
+
+const RECOMMENDATIONS_KEY = "recommendations";
+const RECOMMENDATIONS_TTL = 60 * 60 * 24; // 24 hours
 
 const recommendation = z.object({
   title: z.string().min(3),
@@ -32,8 +36,13 @@ export const generateRecommendations = pub
   )
   .output(z.array(recommendation))
   .handler(async ({ input }) => {
-    if (process.env.NODE_ENV !== "production") {
-      return [];
+    const redis = getRedisClient();
+
+    const recommendations = await redis.get(RECOMMENDATIONS_KEY);
+    const ttl = await redis.ttl(RECOMMENDATIONS_KEY);
+
+    if (recommendations && ttl > 0) {
+      return JSON.parse(recommendations);
     }
 
     const [totals, wellbeingTotals, riskTotals, topTopics] = await Promise.all([
@@ -77,6 +86,12 @@ export const generateRecommendations = pub
       .recommendations;
 
     const parsed = z.array(recommendation).parse(recos);
+
+    await redis.setex(
+      RECOMMENDATIONS_KEY,
+      RECOMMENDATIONS_TTL,
+      JSON.stringify(parsed),
+    );
 
     return parsed;
   });

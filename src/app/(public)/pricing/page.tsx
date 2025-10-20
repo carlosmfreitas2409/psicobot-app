@@ -45,7 +45,7 @@ export default function PricingPage() {
         <div className="space-y-8">
           <Feature
             title="Alertas de risco em tempo real"
-            description="Identifique colaboradores com maior risco e aja rapidamente com base em sinais do PsicoBot."
+            description="Identifique colaboradores com maior risco e aja rapidamente com base em sinais do Risko."
             icon={AlertCircle}
           />
           <Feature

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { User } from "better-auth";
 
 import {
@@ -12,7 +12,9 @@ import {
   Users,
 } from "lucide-react";
 
-import { GlobResMark } from "@/components/logos/globres-mark";
+import { orpc } from "@/lib/orpc";
+
+import { RiskoMark } from "@/components/logos/risko-mark";
 
 import {
   Sidebar as SidebarComponent,
@@ -38,6 +40,9 @@ import { CommandDialog, CommandInput } from "@/components/ui/command";
 
 import { NavUser } from "./nav-user";
 import { NavItem } from "./nav-item";
+import { cn } from "@/lib/utils";
+
+const POLLING_INTERVAL = 1000 * 60 * 5; // 5 minutes
 
 const routes = {
   general: [
@@ -79,6 +84,31 @@ export function Sidebar({ user }: SidebarProps) {
   const { open } = useSidebar();
 
   const [isCommandOpen, setIsCommandOpen] = useState(false);
+  const [status, setStatus] = useState<
+    | {
+        online: boolean;
+        lastSeen?: Date;
+      }
+    | undefined
+  >(undefined);
+
+  useEffect(() => {
+    async function fetchStatus() {
+      try {
+        const result = await orpc.robot.status({});
+        setStatus(result);
+      } catch (error) {
+        console.error("Error fetching robot status:", error);
+        setStatus({ online: false });
+      }
+    }
+
+    fetchStatus();
+
+    const interval = setInterval(fetchStatus, POLLING_INTERVAL);
+
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <SidebarComponent variant="inset" collapsible="icon">
@@ -87,8 +117,8 @@ export function Sidebar({ user }: SidebarProps) {
           <SidebarMenuItem className="flex items-center justify-between gap-2">
             {open && (
               <div className="flex items-center gap-2">
-                <GlobResMark />
-                <span className="font-bold">PsicoBot</span>
+                <RiskoMark className="size-7" />
+                <span className="font-bold">Risko</span>
               </div>
             )}
 
@@ -153,31 +183,47 @@ export function Sidebar({ user }: SidebarProps) {
       </SidebarContent>
 
       <SidebarFooter>
-        {open && (
+        {open && status && (
           <div className="mt-8 rounded-lg border border-border bg-card p-4">
             <div className="mb-2 flex items-center gap-2">
-              <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
+              <div
+                className={cn(
+                  "h-2 w-2 rounded-full animate-pulse",
+                  status.online ? "bg-green-500" : "bg-red-500",
+                )}
+              />
               <span className="text-xs font-medium text-card-foreground">
-                Sistema Online
+                {status.online ? "Sistema Online" : "Sistema Offline"}
               </span>
             </div>
             <p className="text-xs text-muted-foreground line-clamp-2">
-              Robô operacional e pronto para interações.
+              {status.online
+                ? "Robô operacional e pronto para interações."
+                : "Robô offline. Por favor, verifique o status do robô."}
             </p>
           </div>
         )}
 
-        {!open && (
+        {!open && status && (
           <Tooltip>
             <TooltipTrigger asChild>
               <div className="mt-8 rounded-lg border border-border bg-card size-8 flex items-center justify-center">
-                <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
+                <div
+                  className={cn(
+                    "h-2 w-2 rounded-full animate-pulse",
+                    status.online ? "bg-green-500" : "bg-red-500",
+                  )}
+                />
               </div>
             </TooltipTrigger>
             <TooltipContent side="right">
-              <p className="text-xs font-semibold">Sistema Online</p>
+              <p className="text-xs font-semibold">
+                {status.online ? "Sistema Online" : "Sistema Offline"}
+              </p>
               <p className="text-xs">
-                Robô operacional e pronto para interações.
+                {status.online
+                  ? "Robô operacional e pronto para interações."
+                  : "Robô offline. Por favor, verifique o status do robô."}
               </p>
             </TooltipContent>
           </Tooltip>
