@@ -46,7 +46,7 @@ export async function Dashboard({ searchParams }: DashboardProps) {
               <Recommendations />
             </div>
 
-            <WellbeingDistribution />
+            {/* <WellbeingDistribution /> */}
           </div>
         </div>
       </Page>
