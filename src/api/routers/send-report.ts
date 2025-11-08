@@ -15,6 +15,7 @@ import { AnalyticsReportEmail } from "@/components/emails/analytics-report";
 import { db } from "../db/client";
 
 import { pub } from "../orpc";
+import { retry } from "../middlewares/retry";
 
 export const sendAnalyticsReport = pub
   .route({
@@ -23,6 +24,7 @@ export const sendAnalyticsReport = pub
     summary: "Send analytics report via email",
     tags: ["Reports"],
   })
+  .use(retry({ times: 3 }))
   .input(
     z.object({
       recipientEmail: z.email(),

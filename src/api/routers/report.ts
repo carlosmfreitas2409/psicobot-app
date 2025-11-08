@@ -13,6 +13,7 @@ import { recordTopic } from "@/lib/tinybird/record-topic";
 import { recordEmotion } from "@/lib/tinybird/record-emotion";
 
 import { pub } from "../orpc";
+import { retry } from "../middlewares/retry";
 
 const aiSchema = z.object({
   wellbeing: z.object({
@@ -41,6 +42,7 @@ export const createChatReport = pub
     summary: "Generate a new chat report",
     tags: ["Chat"],
   })
+  .use(retry({ times: 3 }))
   .input(
     z.object({
       duration: z.number(),

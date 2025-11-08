@@ -14,6 +14,7 @@ import { db } from "../db/client";
 import { question } from "../db/schema";
 
 import { pub } from "../orpc";
+import { retry } from "../middlewares/retry";
 
 export type Question = typeof question.$inferSelect;
 
@@ -203,6 +204,7 @@ export const createQuestion = pub
     summary: "Create question",
     tags: ["Questions"],
   })
+  .use(retry({ times: 3 }))
   .input(
     z.object({
       question: z.string(),

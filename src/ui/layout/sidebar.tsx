@@ -62,17 +62,17 @@ const routes = {
       url: "/members",
       icon: Users,
     },
+    {
+      title: "Conversar",
+      url: "/chat",
+      icon: MessageCircle,
+    },
   ],
   roadmap: [
     {
       title: "Integrações",
       url: "/integrations",
       icon: Cable,
-    },
-    {
-      title: "Conversar",
-      url: "/chat",
-      icon: MessageCircle,
     },
   ],
 };
