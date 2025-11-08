@@ -1,0 +1,62 @@
+NODE endpoint
+
+SQL >
+  %
+  WITH filtered AS (
+    SELECT chat_id, seq, lower(emotion) AS emotion, timestamp
+    FROM emotion_events
+    WHERE
+      true
+      {% if defined(dateFrom) %}
+        AND timestamp >= {{ DateTime64(dateFrom) }}
+      {% else %}
+        AND timestamp >= now() - INTERVAL 30 DAY
+      {% end %}
+      {% if defined(dateTo) %}
+        AND timestamp <= {{ DateTime64(dateTo) }}
+      {% else %}
+        AND timestamp <= now()
+      {% end %}
+  ),
+  per_chat AS (
+    SELECT
+      chat_id,
+      argMin(emotion, seq) AS first_emotion,
+      argMax(emotion, seq) AS last_emotion
+    FROM filtered
+    GROUP BY chat_id
+  ),
+  scored AS (
+    SELECT
+      chat_id,
+      multiIf(
+        first_emotion IN ('happy','joy','content','calm','relaxed','excited'), 1,
+        first_emotion = 'neutral', 0,
+        -1
+      ) AS first_score,
+      multiIf(
+        last_emotion IN ('happy','joy','content','calm','relaxed','excited'), 1,
+        last_emotion = 'neutral', 0,
+        -1
+      ) AS last_score
+    FROM per_chat
+  ),
+  agg AS (
+    SELECT
+      sumIf(1, last_score > first_score) AS improved,
+      sumIf(1, last_score = first_score) AS maintained,
+      sumIf(1, last_score < first_score) AS worsened,
+      count() AS total
+    FROM scored
+  )
+  SELECT
+    multiIf(total = 0, 0.0, round(100.0 * improved / total, 2)) AS improved,
+    multiIf(total = 0, 0.0, round(100.0 * maintained / total, 2)) AS maintained,
+    multiIf(total = 0, 0.0, round(100.0 * worsened / total, 2)) AS worsened
+  FROM agg
+
+TYPE ENDPOINT
+
+
+
+

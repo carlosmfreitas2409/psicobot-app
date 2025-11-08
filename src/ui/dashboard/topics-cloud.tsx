@@ -2,13 +2,7 @@ import { cva } from "class-variance-authority";
 
 import { orpc } from "@/lib/orpc";
 
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const wordVariant = cva("font-medium transition-all hover:scale-110", {
   variants: {
@@ -67,6 +61,14 @@ export async function TopicsCloud() {
 
       <CardContent>
         <div className="flex min-h-[200px] flex-wrap items-center justify-center gap-4 rounded-lg border border-border bg-muted/20 p-4">
+          {!data.length && (
+            <div className="flex-1 flex items-center justify-center">
+              <p className="text-sm text-muted-foreground">
+                Nenhum tema encontrado
+              </p>
+            </div>
+          )}
+
           {data.map((topic) => (
             <button
               key={topic.name}

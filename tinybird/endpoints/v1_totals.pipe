@@ -67,8 +67,6 @@ SQL >
           AND timestamp <= addMonths(now(), -1)
         {% end %}
     ) AS averageDurationLastMonth,
-    toFloat64(0) AS engagementRate,
-    toFloat64(0) AS engagementRateLastMonth,
     (
       SELECT multiIf(count() = 0, 0.0, round(avg(score), 2))
       FROM wellbeing_events
@@ -100,7 +98,28 @@ SQL >
         {% else %}
           AND timestamp <= addMonths(now(), -1)
         {% end %}
-    ) AS wellbeingScoreLastMonth
+    ) AS wellbeingScoreLastMonth,
+    (
+      SELECT
+        if(count() = 0, 'neutral', argMax(emotion, cnt))
+      FROM (
+        SELECT lower(emotion) AS emotion, count() AS cnt
+        FROM emotion_events
+        WHERE
+          true
+          {% if defined(dateFrom) %}
+            AND timestamp >= {{ DateTime64(dateFrom) }}
+          {% else %}
+            AND timestamp >= now() - INTERVAL 30 DAY
+          {% end %}
+          {% if defined(dateTo) %}
+            AND timestamp <= {{ DateTime64(dateTo) }}
+          {% else %}
+            AND timestamp <= now()
+          {% end %}
+        GROUP BY emotion
+      )
+    ) AS topEmotion
   FROM system.one
 
 TYPE ENDPOINT

@@ -1,0 +1,38 @@
+NODE endpoint
+
+SQL >
+  %
+  WITH totals AS (
+    SELECT
+      lower(emotion) AS emotion,
+      count() AS amount
+    FROM emotion_events
+    WHERE
+      true
+      {% if defined(dateFrom) %}
+        AND timestamp >= {{ DateTime64(dateFrom) }}
+      {% else %}
+        AND timestamp >= now() - INTERVAL 30 DAY
+      {% end %}
+      {% if defined(dateTo) %}
+        AND timestamp <= {{ DateTime64(dateTo) }}
+      {% else %}
+        AND timestamp <= now()
+      {% end %}
+    GROUP BY emotion
+  ),
+  total_all AS (
+    SELECT sum(amount) AS total FROM totals
+  )
+  SELECT
+    emotion,
+    amount,
+    multiIf(total = 0, 0.0, round(100.0 * amount / total, 2)) AS percentage
+  FROM totals, total_all
+  ORDER BY percentage DESC
+
+TYPE ENDPOINT
+
+
+
+

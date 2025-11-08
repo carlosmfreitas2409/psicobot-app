@@ -10,6 +10,7 @@ import { recordChat } from "@/lib/tinybird/record-chat";
 import { recordWellbeing } from "@/lib/tinybird/record-wellbeing";
 import { recordRisk } from "@/lib/tinybird/record-risk";
 import { recordTopic } from "@/lib/tinybird/record-topic";
+import { recordEmotion } from "@/lib/tinybird/record-emotion";
 
 import { pub } from "../orpc";
 
@@ -38,7 +39,7 @@ export const createChatReport = pub
     method: "POST",
     path: "/chats/reports",
     summary: "Generate a new chat report",
-    tags: ["Reports"],
+    tags: ["Chat"],
   })
   .input(
     z.object({
@@ -47,6 +48,7 @@ export const createChatReport = pub
         z.object({
           role: z.enum(["user", "assistant"]),
           text: z.string(),
+          emotion: z.string().nullish(),
         }),
       ),
     }),
@@ -118,6 +120,21 @@ export const createChatReport = pub
       };
     }
 
+    const userEmotionEvents = messages
+      .map((m, idx) => ({ ...m, idx }))
+      .filter(
+        (m) =>
+          m.role === "user" &&
+          typeof m.emotion === "string" &&
+          m.emotion.length > 0,
+      )
+      .map((m, seqIndex) => ({
+        timestamp,
+        chat_id: chatId,
+        seq: seqIndex,
+        emotion: (m.emotion as string).toLowerCase(),
+      }));
+
     await Promise.all([
       recordChat({
         timestamp,
@@ -147,7 +164,11 @@ export const createChatReport = pub
             };
           }),
         ),
+      userEmotionEvents.length > 0 && recordEmotion(userEmotionEvents),
     ]);
 
     return { chatId };
+  })
+  .callable({
+    context: {},
   });

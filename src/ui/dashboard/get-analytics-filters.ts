@@ -29,6 +29,6 @@ export async function getAnalyticsFilters(
     dateFrom: start?.toISOString(),
     dateTo: end?.toISOString(),
     interval,
-    // timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
   };
 }

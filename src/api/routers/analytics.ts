@@ -11,6 +11,8 @@ type AnalyticsOutput<T extends keyof typeof analyticsOutput> = z.infer<
 
 const analyticsOutput = {
   totals: analyticsResponse.totals,
+  emotions_distribution: z.array(analyticsResponse.emotions_distribution),
+  chat_trajectory: analyticsResponse.chat_trajectory,
   wellbeing_totals: analyticsResponse.wellbeing_totals,
   risk_totals: analyticsResponse.risk_totals,
   wellbeing_timeseries: z.array(analyticsResponse.wellbeing_timeseries),

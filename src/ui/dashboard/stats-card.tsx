@@ -5,8 +5,8 @@ import { cn } from "@/lib/utils";
 interface StatsCardProps {
   title: string;
   value: string;
-  change: string;
-  trend: "up" | "down";
+  change?: string;
+  trend?: "up" | "down";
 }
 
 export function StatsCard({ title, value, change, trend }: StatsCardProps) {
@@ -23,22 +23,20 @@ export function StatsCard({ title, value, change, trend }: StatsCardProps) {
             {value}
           </p>
         </div>
-        <div
-          className={cn(
-            "flex items-center gap-1 rounded-full px-2 py-1 text-xs font-medium",
-            trend === "up"
-              ? "bg-green-100 text-green-500"
-              : "bg-red-100 text-red-500",
-          )}
-        >
-          {trend === "up" ? (
-            <ArrowUp className="h-3 w-3" />
-          ) : (
-            <ArrowDown className="h-3 w-3" />
-          )}
 
-          {change}
-        </div>
+        {change && (
+          <div
+            className={cn(
+              "flex items-center gap-1 rounded-full px-2 py-1 text-xs font-medium",
+              trend === "up" && "bg-green-100 text-green-500",
+              trend === "down" && "bg-red-100 text-red-500",
+            )}
+          >
+            {trend === "up" && <ArrowUp className="h-3 w-3" />}
+            {trend === "down" && <ArrowDown className="h-3 w-3" />}
+            {change}
+          </div>
+        )}
       </div>
     </div>
   );

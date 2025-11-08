@@ -52,34 +52,6 @@ const integrations = [
       },
     ],
   },
-  {
-    name: "Saúde e Bem-Estar",
-    description: "Encaminhe casos críticos para atendimento profissional",
-    integrations: [
-      {
-        name: "VidaCare Saúde",
-        description: "Assistência domiciliar e telemedicina",
-        logo: vidacareLogo,
-        features: [
-          "Encaminhamento automático de casos críticos",
-          "Agendamento facilitado",
-          "Acompanhamento de atendimentos",
-          "Feedback loop para IA",
-        ],
-      },
-      {
-        name: "Zenklub",
-        description: "Plataforma de terapia online corporativa",
-        logo: zenklubLogo,
-        features: [
-          "Agendamento de sessões",
-          "Encaminhamento direto",
-          "Relatórios agregados",
-          "Integração via API",
-        ],
-      },
-    ],
-  },
 ];
 
 export default function IntegrationsPage() {

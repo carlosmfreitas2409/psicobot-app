@@ -92,7 +92,8 @@ export async function RiskAlerts() {
               <AlertTriangle className="h-5 w-5 text-destructive" />
               <div>
                 <p className="text-sm font-medium text-destructive">
-                  {data.critical} casos críticos
+                  {data.critical}{" "}
+                  {data.critical === 1 ? "caso crítico" : "casos críticos"}
                 </p>
                 <p className="mt-1 text-xs text-muted-foreground">
                   Requerem atenção imediata da equipe de RH

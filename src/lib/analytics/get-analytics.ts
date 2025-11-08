@@ -52,7 +52,8 @@ export async function getAnalytics(parameters: AnayticsFilter) {
     groupBy === "totals" ||
     groupBy === "risk_totals" ||
     groupBy === "wellbeing_totals" ||
-    groupBy === "chat_totals"
+    groupBy === "chat_totals" ||
+    groupBy === "chat_trajectory"
   ) {
     return response.data[0];
   }

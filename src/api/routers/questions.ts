@@ -15,6 +15,8 @@ import { question } from "../db/schema";
 
 import { pub } from "../orpc";
 
+export type Question = typeof question.$inferSelect;
+
 const VALIDATION_PROMPT = `Você é um validador de perguntas para um sistema de escuta psicossocial corporativa.
 Sua função é analisar perguntas customizadas criadas por empresas e determinar se são
 seguras, éticas e respeitam o anonimato dos colaboradores.
@@ -159,6 +161,8 @@ export const listQuestions = pub
         frequency: z.enum(["rare", "occasional", "frequent"]),
         status: z.enum(["approved", "rejected", "pending"]),
         rejectionReason: z.string().nullable(),
+        organizationId: z.string(),
+        authorId: z.string(),
         author: z.object({
           id: z.string(),
           name: z.string(),
@@ -187,6 +191,9 @@ export const listQuestions = pub
     });
 
     return questions;
+  })
+  .callable({
+    context: {},
   });
 
 export const createQuestion = pub

@@ -2,9 +2,23 @@ import { orpc } from "@/lib/orpc/index";
 
 import { StatsCard } from "./stats-card";
 
+function formatEmotionLabel(emotion: string | undefined): string {
+  switch ((emotion || "neutral").toLowerCase()) {
+    case "happy":
+      return "Feliz 😄";
+    case "sad":
+      return "Triste 😢";
+    case "angry":
+      return "Bravo 😠";
+    case "neutral":
+      return "Neutro 😐";
+    default:
+      return `${emotion ?? "Neutro"}`;
+  }
+}
+
 export async function TotalsCards() {
   const data = await orpc.analytics.totals({});
-  const wellbeingData = await orpc.analytics.wellbeingTotals({});
 
   const chatsLastMonthPercentage =
     data.chats > 0
@@ -23,12 +37,6 @@ export async function TotalsCards() {
     data.wellbeingScore - data.wellbeingScoreLastMonth
   ).toFixed(1);
 
-  const healthyPercentage = wellbeingData.healthy;
-  const healthyPercentageLastMonth = wellbeingData.healthyLastMonth;
-  const healthyChange = (
-    healthyPercentage - healthyPercentageLastMonth
-  ).toFixed(1);
-
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
       <StatsCard
@@ -39,17 +47,15 @@ export async function TotalsCards() {
       />
 
       <StatsCard
-        title="Bem-estar saudável"
-        value={`${healthyPercentage.toFixed(0)}%`}
-        change={`${healthyChange > "0" ? "+" : ""}${healthyChange}%`}
-        trend={Number(healthyChange) >= 0 ? "up" : "down"}
-      />
-
-      <StatsCard
         title="Duração média"
         value={`${durationInMinutes} min`}
         change={`${durationChange > 0 ? "+" : ""}${durationChange} min`}
         trend={durationChange >= 0 ? "up" : "down"}
+      />
+
+      <StatsCard
+        title="Emoção Dominante"
+        value={formatEmotionLabel(data.topEmotion)}
       />
 
       <StatsCard

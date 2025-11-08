@@ -31,6 +31,10 @@ import {
 } from "@/components/ui/select";
 
 const ROLES = {
+  employee: {
+    label: "Funcionário",
+    description: "Pode apenas conversar com a Risko",
+  },
   member: {
     label: "Membro",
     description: "Pode visualizar dados e relatórios",

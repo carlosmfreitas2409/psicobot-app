@@ -12,10 +12,19 @@ export const analyticsResponse = {
       .number()
       .nullable()
       .transform((v) => v ?? 0),
-    // engagementRate: z.number(),
-    // engagementRateLastMonth: z.number(),
     wellbeingScore: z.number(),
     wellbeingScoreLastMonth: z.number(),
+    topEmotion: z.string(),
+  }),
+  emotions_distribution: z.object({
+    emotion: z.string(),
+    amount: z.number(),
+    percentage: z.number(),
+  }),
+  chat_trajectory: z.object({
+    improved: z.number(),
+    maintained: z.number(),
+    worsened: z.number(),
   }),
   wellbeing_totals: z.object({
     healthy: z.number(),
