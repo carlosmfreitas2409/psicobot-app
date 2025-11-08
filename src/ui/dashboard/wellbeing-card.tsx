@@ -19,7 +19,9 @@ interface WellbeingCardProps {
 export async function WellbeingCard({ filters }: WellbeingCardProps) {
   const totals = await orpc.analytics.wellbeingTotals(filters);
 
-  const timseries = await orpc.analytics.wellbeingTimeseries(filters);
+  const timseries = await orpc.analytics.wellbeingTimeseries({
+    timezone: filters.timezone,
+  });
 
   return (
     <Card>

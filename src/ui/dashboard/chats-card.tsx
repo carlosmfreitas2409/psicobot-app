@@ -19,7 +19,9 @@ interface ChatsCardProps {
 export async function ChatsCard({ filters }: ChatsCardProps) {
   const totals = await orpc.analytics.chatTotals(filters);
 
-  const timeseries = await orpc.analytics.chatTimeseries(filters);
+  const timeseries = await orpc.analytics.chatTimeseries({
+    timezone: filters.timezone,
+  });
 
   return (
     <Card className="justify-between">
